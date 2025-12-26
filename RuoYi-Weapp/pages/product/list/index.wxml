@@ -1,0 +1,24 @@
+<view class="container">
+  <view class="search-bar">
+    <input class="search-input" placeholder="请输入产品名称搜索" bindconfirm="handleSearch" />
+    <view class="add-btn" bindtap="handleAdd">+</view>
+  </view>
+
+  <view class="list-container">
+    <view class="item" wx:for="{{list}}" wx:key="id" bindtap="handleEdit" data-id="{{item.id}}">
+      <view class="item-header">
+        <text class="item-title">{{item.name}}</text>
+        <text class="item-status status-{{item.status}}">{{item.status === 1 ? '正常' : '停用'}}</text>
+      </view>
+      <view class="item-content">
+        <text>品牌: {{item.brandName || '-'}}</text>
+        <text>分类: {{item.categoryName || '-'}}</text>
+      </view>
+      <view class="item-footer">
+        <view class="action-btn delete" catchtap="handleDelete" data-id="{{item.id}}">删除</view>
+      </view>
+    </view>
+    <view class="loading" wx:if="{{loading}}">加载中...</view>
+    <view class="no-more" wx:if="{{!loading && list.length >= total}}">没有更多了</view>
+  </view>
+</view>

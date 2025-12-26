@@ -1,0 +1,30 @@
+<view class="container">
+  <view class="section">
+    <view class="title">商家：{{merchantName}}</view>
+    <view wx:if="{{loading}}" class="loading">加载中...</view>
+    <view wx:elif="{{batches.length > 0}}" class="batch-list">
+      <view wx:for="{{batches}}" wx:for-item="batch" wx:key="batchId" class="batch-item">
+        <view class="batch-title" bindtap="toggleBatch" data-batch-index="{{index}}">
+          <view class="batch-info">
+            <text class="batch-name">{{batch.batchName}}</text>
+            <text class="batch-date">{{batch.batchDate}}</text>
+          </view>
+          <image class="arrow" src="{{batch.expanded ? '/assets/images/arrow-up.png' : '/assets/images/arrow-down.png'}}"></image>
+        </view>
+        <view wx:if="{{batch.expanded}}" class="product-list">
+          <view wx:for="{{batch.products}}" wx:for-item="product" wx:for-index="productIndex" wx:key="productId" class="product-item">
+            <view class="product-info">
+              <text class="product-name">{{product.productName}}</text>
+              <text class="product-spec">{{product.productSpec}}</text>
+            </view>
+            <view class="quote-form">
+              <input class="quote-input" type="digit" placeholder="输入报价" value="{{product.quotePriceInput}}" bindinput="onInputQuotePrice" data-batch-index="{{index}}" data-product-index="{{productIndex}}" />
+              <button class="quote-submit" size="mini" bindtap="submitProductQuote" data-batch-index="{{index}}" data-product-index="{{productIndex}}" data-product-id="{{product.productId}}">提交报价</button>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="empty">暂无批次数据</view>
+  </view>
+</view>

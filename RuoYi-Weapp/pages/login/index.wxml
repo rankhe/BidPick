@@ -1,0 +1,35 @@
+<view class="container">
+  <view class="section">
+    <view class="title">欢迎使用 RuoYi</view>
+    
+    <!-- 登录方式切换 -->
+    <view class="login-tabs">
+      <text class="tab-item {{loginType === 'wechat' ? 'active' : ''}}" bindtap="switchLoginType" data-type="wechat">微信登录</text>
+      <text class="tab-item {{loginType === 'password' ? 'active' : ''}}" bindtap="switchLoginType" data-type="password">账号密码登录</text>
+    </view>
+    
+    <!-- 微信登录 -->
+    <view wx:if="{{loginType === 'wechat'}}" class="login-content">
+      <button class="btn-wechat" bindtap="onWechatLogin" loading="{{loading}}">
+        <image class="wechat-icon" src="/assets/images/wechat.png"></image>
+        微信授权登录
+      </button>
+    </view>
+    
+    <!-- 账号密码登录 -->
+    <view wx:else class="login-content">
+      <view class="form-group">
+        <input type="text" class="input" placeholder="请输入用户名" bindinput="onUsernameInput" value="{{username}}" />
+      </view>
+      <view class="form-group">
+        <input type="password" class="input" placeholder="请输入密码" bindinput="onPasswordInput" value="{{password}}" />
+      </view>
+      <!-- 验证码 -->
+      <view class="form-group" wx:if="{{captchaEnabled}}">
+        <input type="text" class="input code-input" placeholder="请输入验证码" bindinput="onCodeInput" value="{{code}}" maxlength="4" />
+        <image class="code-img" src="{{codeUrl}}" bindtap="getCodeImg"></image>
+      </view>
+      <button class="btn-login" bindtap="onPasswordLogin" loading="{{loading}}">登录</button>
+    </view>
+  </view>
+</view>

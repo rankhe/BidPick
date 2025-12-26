@@ -1,0 +1,158 @@
+.container {
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.section {
+  background-color: #fff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  color: #333;
+}
+
+.loading {
+  text-align: center;
+  padding: 40rpx;
+  color: #999;
+}
+
+.empty {
+  text-align: center;
+  padding: 60rpx;
+  color: #999;
+}
+
+/* 商家列表样式 */
+.merchant-list {
+  margin-top: 20rpx;
+}
+
+.merchant-item {
+  margin-bottom: 20rpx;
+  border: 1rpx solid #e5e5e5;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.merchant-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  background-color: #fafafa;
+  cursor: pointer;
+}
+
+.merchant-info {
+  flex: 1;
+}
+
+.merchant-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-right: 20rpx;
+}
+
+.merchant-code {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.arrow {
+  width: 20rpx;
+  height: 20rpx;
+  transition: transform 0.3s;
+}
+
+/* 批次列表样式 */
+.batch-list {
+  padding-left: 20rpx;
+}
+
+.batch-item {
+  border-top: 1rpx solid #e5e5e5;
+  margin-left: 20rpx;
+}
+
+.batch-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  cursor: pointer;
+}
+
+.batch-info {
+  flex: 1;
+}
+
+.batch-name {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+  margin-right: 20rpx;
+}
+
+.batch-date {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 商品列表样式 */
+.product-list {
+  padding-left: 20rpx;
+}
+
+.product-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  border-top: 1rpx solid #f0f0f0;
+  margin-left: 20rpx;
+}
+
+.product-info {
+  flex: 1;
+}
+
+.product-name {
+  font-size: 28rpx;
+  color: #333;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.product-spec {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.product-price {
+  display: flex;
+  align-items: center;
+}
+
+.price {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #e64340;
+  margin-right: 20rpx;
+}
+
+.quote-btn {
+  background-color: #2d8cf0;
+  color: #fff;
+  font-size: 24rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 4rpx;
+}

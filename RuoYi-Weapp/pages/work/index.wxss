@@ -1,0 +1,93 @@
+.container {
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.section {
+  background-color: #fff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  padding-left: 10rpx;
+  border-left: 8rpx solid #36a65b;
+}
+
+/* Grid Layout */
+.grid-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.grid-item {
+  width: 33.33%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 0;
+  box-sizing: border-box;
+}
+
+.grid-icon {
+  width: 64rpx;
+  height: 64rpx;
+  margin-bottom: 10rpx;
+  /* Placeholder color if image missing */
+  background-color: #eee; 
+  border-radius: 50%;
+}
+
+.grid-text {
+  font-size: 26rpx;
+  color: #333;
+}
+
+/* Merchant List */
+.merchant-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #eee;
+}
+
+.merchant-item:last-child {
+  border-bottom: none;
+}
+
+.merchant-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.merchant-name {
+  font-size: 30rpx;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.merchant-code {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.detail-btn {
+  background-color: #36a65b;
+  color: #fff;
+  font-size: 24rpx;
+  padding: 0 20rpx;
+}
+
+.loading, .empty {
+  text-align: center;
+  color: #999;
+  padding: 40rpx 0;
+  font-size: 28rpx;
+}

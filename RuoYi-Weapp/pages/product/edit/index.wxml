@@ -1,0 +1,40 @@
+<view class="container">
+  <view class="form-group">
+    <view class="form-item">
+      <text class="label">产品名称</text>
+      <input class="input" placeholder="请输入名称" value="{{form.name}}" bindinput="handleInput" data-field="name" />
+    </view>
+
+    <view class="form-item">
+      <text class="label">品牌</text>
+      <picker bindchange="handleBrandChange" value="{{brandIndex}}" range="{{brands}}" range-key="name">
+        <view class="picker">
+          {{selectedBrandName || '请选择品牌'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">分类</text>
+      <picker bindchange="handleCategoryChange" value="{{categoryIndex}}" range="{{categories}}" range-key="name">
+        <view class="picker">
+          {{selectedCategoryName || '请选择分类'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">状态</text>
+      <switch checked="{{form.status === 1}}" bindchange="handleStatusChange" />
+    </view>
+
+    <view class="form-item">
+      <text class="label">备注</text>
+      <textarea class="textarea" placeholder="备注信息" value="{{form.remark}}" bindinput="handleInput" data-field="remark" />
+    </view>
+  </view>
+
+  <view class="footer">
+    <button class="submit-btn" bindtap="submitForm">保存</button>
+  </view>
+</view>

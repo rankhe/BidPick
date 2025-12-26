@@ -1,0 +1,6 @@
+<view class="container">
+  <view class="section">
+    <image class="avatar" src="{{avatar}}"></image>
+    <button class="btn-primary" bindtap="chooseImage">选择图片并上传</button>
+  </view>
+</view>

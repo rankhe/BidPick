@@ -1,0 +1,51 @@
+<view class="container">
+  <view class="section">
+    <view class="title">报价详情</view>
+    
+    <!-- 加载提示 -->
+    <view wx:if="{{loading}}" class="loading">加载中...</view>
+    
+    <!-- 报价详情 -->
+    <view wx:else class="detail-container">
+      <view class="detail-item">
+        <text class="label">产品名称:</text>
+        <text class="value">{{quoteDetail.productName}}</text>
+      </view>
+      
+      <view class="detail-item">
+        <text class="label">批次名称:</text>
+        <text class="value">{{quoteDetail.batchName}}</text>
+      </view>
+      
+      <view class="detail-item">
+        <text class="label">商家名称:</text>
+        <text class="value">{{quoteDetail.merchantName}}</text>
+      </view>
+      
+      <view class="detail-item">
+        <text class="label">我的报价:</text>
+        <text class="value price">{{quoteDetail.quotePrice}}</text>
+      </view>
+      
+      <view class="detail-item">
+        <text class="label">市场价格:</text>
+        <text class="value">{{quoteDetail.marketPrice}}</text>
+      </view>
+      
+      <view class="detail-item">
+        <text class="label">报价时间:</text>
+        <text class="value">{{quoteDetail.quoteTime}}</text>
+      </view>
+      
+      <view class="detail-item">
+        <text class="label">状态:</text>
+        <text class="value">{{quoteDetail.status}}</text>
+      </view>
+      
+      <view class="detail-item">
+        <text class="label">备注:</text>
+        <text class="value">{{quoteDetail.remark}}</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,11 @@
+<view class="container">
+  <view class="list-container">
+    <view class="item" wx:for="{{list}}" wx:key="id">
+      <view class="item-title">{{item.name}}</view>
+      <view class="item-content">
+        <text>等级: {{item.level}}</text>
+        <text style="margin-left: 20rpx;">品牌: {{item.brandName || '-'}}</text>
+      </view>
+    </view>
+  </view>
+</view>

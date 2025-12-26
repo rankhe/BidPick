@@ -1,0 +1,41 @@
+<view class="container">
+  <view class="section">
+    <view class="title">我的报价</view>
+    
+    <!-- 加载提示 -->
+    <view wx:if="{{loading}}" class="loading">加载中...</view>
+    
+    <!-- 报价列表 -->
+    <view wx:elif="{{quoteList.length > 0}}" class="quote-list">
+      <view wx:for="{{quoteList}}" wx:key="quoteId" class="quote-item" bindtap="viewQuoteDetail" data-quote-id="{{item.quoteId}}">
+        <!-- 报价基本信息 -->
+        <view class="quote-header">
+          <view class="quote-info">
+            <text class="product-name">{{item.productName}}</text>
+            <text class="batch-name">{{item.batchName}}</text>
+          </view>
+          <text class="quote-status">{{item.status}}</text>
+        </view>
+        
+        <!-- 报价详情 -->
+        <view class="quote-details">
+          <view class="detail-item">
+            <text class="label">我的报价:</text>
+            <text class="value">¥{{item.quotePrice}}</text>
+          </view>
+          <view class="detail-item">
+            <text class="label">报价时间:</text>
+            <text class="value">{{item.quoteTime}}</text>
+          </view>
+          <view class="detail-item">
+            <text class="label">商家:</text>
+            <text class="value">{{item.merchantName}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 空数据提示 -->
+    <view wx:else class="empty">暂无报价记录</view>
+  </view>
+</view>

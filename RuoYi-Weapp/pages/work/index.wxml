@@ -1,0 +1,47 @@
+<view class="container">
+  <!-- Operation Management Dashboard -->
+  <view class="section operation-section" wx:if="{{isOperationUser}}">
+    <view class="title">运营管理工作台</view>
+    <view class="grid-container">
+      <view class="grid-item" bindtap="navTo" data-url="/pages/product/list/index">
+        <image src="/assets/images/tabbar/home.png" class="grid-icon"></image>
+        <text class="grid-text">商品管理</text>
+      </view>
+      <view class="grid-item" bindtap="navTo" data-url="/pages/batch/list/index">
+        <image src="/assets/images/tabbar/home.png" class="grid-icon"></image>
+        <text class="grid-text">批次管理</text>
+      </view>
+      <view class="grid-item" bindtap="navTo" data-url="/pages/quote/list/index">
+        <image src="/assets/images/tabbar/home.png" class="grid-icon"></image>
+        <text class="grid-text">报价审核</text>
+      </view>
+      <view class="grid-item" bindtap="navTo" data-url="/pages/blackuser/list/index">
+        <image src="/assets/images/tabbar/home.png" class="grid-icon"></image>
+        <text class="grid-text">黑名单</text>
+      </view>
+      <view class="grid-item" bindtap="navTo" data-url="/pages/brand/list/index">
+        <image src="/assets/images/tabbar/home.png" class="grid-icon"></image>
+        <text class="grid-text">品牌管理</text>
+      </view>
+      <view class="grid-item" bindtap="navTo" data-url="/pages/category/list/index">
+        <image src="/assets/images/tabbar/home.png" class="grid-icon"></image>
+        <text class="grid-text">分类管理</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="title">商家列表</view>
+    <view wx:if="{{loading}}" class="loading">加载中...</view>
+    <view wx:elif="{{merchantList.length > 0}}" class="merchant-list">
+      <view wx:for="{{merchantList}}" wx:key="merchantId" class="merchant-item">
+        <view class="merchant-info">
+          <text class="merchant-name">{{item.merchantName}}</text>
+          <text class="merchant-code">{{item.merchantCode}}</text>
+        </view>
+        <button class="detail-btn" size="mini" bindtap="viewMerchantDetail" data-merchant-id="{{item.merchantId}}">查看批次</button>
+      </view>
+    </view>
+    <view wx:else class="empty">暂无商家数据</view>
+  </view>
+</view>

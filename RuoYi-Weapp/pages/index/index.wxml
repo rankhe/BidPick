@@ -1,0 +1,53 @@
+<view class="container">
+  <view class="section">
+    <view class="title">商品列表</view>
+    
+    <!-- 加载提示 -->
+    <view wx:if="{{loading}}" class="loading">加载中...</view>
+    
+    <!-- 商家列表 -->
+    <view wx:elif="{{merchantList.length > 0}}" class="merchant-list">
+      <view wx:for="{{merchantList}}" wx:key="merchantId" class="merchant-item">
+        <!-- 商家标题，可展开/折叠 -->
+        <view class="merchant-title" bindtap="toggleMerchant" data-index="{{index}}">
+          <view class="merchant-info">
+            <text class="merchant-name">{{item.merchantName}}</text>
+            <text class="merchant-code">{{item.merchantCode}}</text>
+          </view>
+          <image class="arrow" src="{{item.expanded ? '/assets/images/arrow-up.png' : '/assets/images/arrow-down.png'}}"></image>
+        </view>
+        
+        <!-- 批次列表，当商家展开时显示 -->
+        <view wx:if="{{item.expanded}}" class="batch-list">
+          <view wx:for="{{item.batches}}" wx:for-item="batch" wx:key="batchId" class="batch-item">
+            <!-- 批次标题，可展开/折叠 -->
+            <view class="batch-title" bindtap="toggleBatch" data-merchant-index="{{index}}" data-batch-index="{{index2}}">
+              <view class="batch-info">
+                <text class="batch-name">{{batch.batchName}}</text>
+                <text class="batch-date">{{batch.batchDate}}</text>
+              </view>
+              <image class="arrow" src="{{batch.expanded ? '/assets/images/arrow-up.png' : '/assets/images/arrow-down.png'}}"></image>
+            </view>
+            
+            <!-- 商品列表，当批次展开时显示 -->
+            <view wx:if="{{batch.expanded}}" class="product-list">
+              <view wx:for="{{batch.products}}" wx:for-item="product" wx:key="productId" class="product-item">
+                <view class="product-info">
+                  <text class="product-name">{{product.productName}}</text>
+                  <text class="product-spec">{{product.productSpec}}</text>
+                </view>
+                <view class="product-price">
+                  <text class="price">¥{{product.price}}</text>
+                  <button class="quote-btn" size="mini">报价</button>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 空数据提示 -->
+    <view wx:else class="empty">暂无商品数据</view>
+  </view>
+</view>

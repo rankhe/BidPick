@@ -1,0 +1,21 @@
+<view class="container">
+  <view class="search-bar">
+    <view class="add-btn" bindtap="handleAdd" style="width: 100%; margin: 0; border-radius: 10rpx;">+ 发布新批次</view>
+  </view>
+
+  <view class="list-container">
+    <view class="item" wx:for="{{list}}" wx:key="id">
+      <view class="item-header">
+        <text class="item-title">批次号: {{item.batchNo}}</text>
+        <text class="item-status">{{item.status === 1 ? '进行中' : '已结束'}}</text>
+      </view>
+      <view class="item-content">
+        <text>开始时间: {{item.startTime || '-'}}</text>
+        <text>结束时间: {{item.endTime || '-'}}</text>
+        <text>备注: {{item.remark || '-'}}</text>
+      </view>
+    </view>
+    <view class="loading" wx:if="{{loading}}">加载中...</view>
+    <view class="no-more" wx:if="{{!loading && list.length >= total}}">没有更多了</view>
+  </view>
+</view>

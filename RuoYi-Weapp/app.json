@@ -1,0 +1,45 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/work/index",
+    "pages/mine/index",
+    "pages/login/index",
+    "pages/mine/info/index",
+    "pages/mine/pwd/index",
+    "pages/mine/avatar/index",
+    "pages/quote/index",
+    "pages/merchant/detail/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "RuoYi Weapp",
+    "navigationBarTextStyle": "white",
+    "navigationBarBackgroundColor": "#2d8cf0",
+    "backgroundTextStyle": "dark"
+  },
+
+  "tabBar": {
+    "color": "#666",
+    "selectedColor": "#2d8cf0",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/work/index",
+        "text": "商家"
+      },
+      {
+        "pagePath": "pages/quote/index",
+        "text": "我的报价"
+      },
+      {
+        "pagePath": "pages/mine/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

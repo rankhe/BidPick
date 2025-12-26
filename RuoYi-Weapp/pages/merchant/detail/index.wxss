@@ -1,0 +1,7 @@
+.title { font-weight: 600; margin: 16rpx 0; }
+.batch-item { border-bottom: 1px solid #eee; padding: 12rpx 0; }
+.batch-title { display: flex; justify-content: space-between; align-items: center; }
+.product-item { display: flex; flex-direction: column; padding: 8rpx 0; }
+.quote-form { display: flex; align-items: center; gap: 12rpx; margin-top: 8rpx; }
+.quote-input { border: 1px solid #ccc; padding: 8rpx; border-radius: 6rpx; flex: 1; }
+.quote-submit { background-color: #2d8cf0; color: #fff; }

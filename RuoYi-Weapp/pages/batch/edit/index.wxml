@@ -1,0 +1,35 @@
+<view class="container">
+  <view class="form-group">
+    <view class="form-item">
+      <text class="label">批次号</text>
+      <input class="input" placeholder="请输入批次号" value="{{form.batchNo}}" bindinput="handleInput" data-field="batchNo" />
+    </view>
+
+    <view class="form-item">
+      <text class="label">开始时间</text>
+      <picker mode="date" value="{{form.startTime}}" bindchange="handleDateChange" data-field="startTime">
+        <view class="picker">
+          {{form.startTime || '请选择开始日期'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">结束时间</text>
+      <picker mode="date" value="{{form.endTime}}" bindchange="handleDateChange" data-field="endTime">
+        <view class="picker">
+          {{form.endTime || '请选择结束日期'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">备注</text>
+      <textarea class="textarea" placeholder="备注信息" value="{{form.remark}}" bindinput="handleInput" data-field="remark" />
+    </view>
+  </view>
+
+  <view class="footer">
+    <button class="submit-btn" bindtap="submitForm">发布批次</button>
+  </view>
+</view>

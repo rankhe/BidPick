@@ -1,0 +1,19 @@
+<view class="container">
+  <view class="section">
+    <form bindsubmit="onSubmit">
+      <view class="form-item">
+        <text>昵称</text>
+        <input name="nickName" value="{{form.nickName}}" bindinput="onInput" data-field="nickName" />
+      </view>
+      <view class="form-item">
+        <text>手机</text>
+        <input name="phonenumber" value="{{form.phonenumber}}" bindinput="onInput" data-field="phonenumber" />
+      </view>
+      <view class="form-item">
+        <text>邮箱</text>
+        <input name="email" value="{{form.email}}" bindinput="onInput" data-field="email" />
+      </view>
+      <button class="btn-primary" formType="submit" loading="{{loading}}">保存</button>
+    </form>
+  </view>
+</view>

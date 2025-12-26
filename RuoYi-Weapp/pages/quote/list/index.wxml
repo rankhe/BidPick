@@ -1,0 +1,18 @@
+<view class="container">
+  <view class="list-container">
+    <view class="item" wx:for="{{list}}" wx:key="id">
+      <view class="item-header">
+        <text class="item-title">产品: {{item.prodCategory || item.prodId}}</text>
+        <text class="price">¥{{item.price}}</text>
+      </view>
+      <view class="item-content">
+        <text>报价人: {{item.quoterName || '未知用户'}}</text>
+        <text>联系电话: {{item.phonenumber || '-'}}</text>
+        <text>报价时间: {{item.createTime}}</text>
+        <text>状态: {{item.status === 1 ? '有效' : '无效'}}</text>
+      </view>
+    </view>
+    <view class="loading" wx:if="{{loading}}">加载中...</view>
+    <view class="no-more" wx:if="{{!loading && list.length >= total}}">没有更多了</view>
+  </view>
+</view>

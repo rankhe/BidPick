@@ -1,0 +1,8 @@
+<view class="container">
+  <view class="list-container">
+    <view class="item" wx:for="{{list}}" wx:key="id">
+      <view class="item-title">{{item.name}}</view>
+      <view class="item-content">创建时间: {{item.createTime}}</view>
+    </view>
+  </view>
+</view>
