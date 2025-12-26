@@ -20,7 +20,7 @@ Page({
     const sessionId = wx.getStorageSync('App-SessionId')
     if (sessionId) {
       try {
-        const res = await getInfo()
+        const res = await getInfo({ skipAuthHandler: true })
         if (res && res.user) {
           wx.reLaunch({ url: '/pages/mine/index' })
           return

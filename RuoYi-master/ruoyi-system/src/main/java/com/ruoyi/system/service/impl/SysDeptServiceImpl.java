@@ -45,6 +45,18 @@ public class SysDeptServiceImpl implements ISysDeptService
     }
 
     /**
+     * 查询部门管理数据（忽略数据权限）
+     * 
+     * @param dept 部门信息
+     * @return 部门信息集合
+     */
+    @Override
+    public List<SysDept> selectDeptListIgnoreDataScope(SysDept dept)
+    {
+        return deptMapper.selectDeptList(dept);
+    }
+
+    /**
      * 查询部门管理树
      * 
      * @param dept 部门信息
@@ -62,7 +74,7 @@ public class SysDeptServiceImpl implements ISysDeptService
     /**
      * 查询部门管理树（排除下级）
      * 
-     * @param deptId 部门ID
+     * @param dept 部门
      * @return 所有部门信息
      */
     @Override

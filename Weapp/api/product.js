@@ -7,9 +7,9 @@ const request = require('../utils/request')
  */
 function getProductList(params) {
   return request({
-    url: '/api/product/list',
-    method: 'GET',
-    params: params
+    url: '/product/info/listWeapp',
+    method: 'POST',
+    data: params || {}
   })
 }
 
@@ -20,9 +20,9 @@ function getProductList(params) {
  */
 function getQuoteHistory(params) {
   return request({
-    url: '/api/quote/history',
-    method: 'GET',
-    params: params
+    url: '/product/history/quoter/listWeapp',
+    method: 'POST',
+    data: params || {}
   })
 }
 
@@ -33,8 +33,9 @@ function getQuoteHistory(params) {
  */
 function submitQuote(data) {
   return request({
-    url: '/api/quote/submit',
+    url: '/product/history/addWeapp',
     method: 'POST',
+    header: { 'Content-Type': 'application/x-www-form-urlencoded' },
     data
   })
 }

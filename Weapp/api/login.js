@@ -76,10 +76,11 @@ function register(data) {
   })
 }
 
-function getInfo() {
+function getInfo(options) {
   return request({
     url: '/getInfo',
-    method: 'GET'
+    method: 'GET',
+    ...options
   })
 }
 

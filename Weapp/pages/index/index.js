@@ -19,11 +19,8 @@ Page({
     this.setData({ loading: true })
     
     getProductList().then(res => {
-      // 假设后端返回的数据已经按商家-批次-商品维度组织
-      // 如果不是，需要在这里进行数据处理
-      this.setData({
-        merchantList: res.data || []
-      })
+      const rows = (res && res.rows) || []
+      this.setData({ merchantList: rows })
     }).catch(err => {
       console.error('获取商品列表失败:', err)
       wx.showToast({ icon: 'none', title: '获取商品列表失败' })

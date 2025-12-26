@@ -98,6 +98,34 @@ public class ProdQuotationHistoryController extends BaseController
     }
 
     /**
+     * 查询产收到的报价 (小程序)
+     */
+    @PostMapping("/listWeapp")
+    @ResponseBody
+    public TableDataInfo listWeapp(ProdQuotationHistory prodQuotationHistory)
+    {
+        startPage();
+        prodQuotationHistory.setDeptId(getSysUser().getDeptId());
+        List<ProdQuotationHistory> list = prodQuotationHistoryService.selectProdQuotationHistoryList(prodQuotationHistory);
+        List<ProdQuotationHistoryVO> result = list.stream().map(i -> {
+            ProdQuotationHistoryVO vo = new ProdQuotationHistoryVO();
+            BeanUtils.copyProperties(i, vo);
+            ProdInfo prodInfo = prodInfoService.selectProdInfoById(i.getProdId());
+            if(prodInfo != null)
+            {
+                final Long categoryId = prodInfo.getCategoryId();
+                final ProdCategory prodCategory = prodCategoryService.selectProdCategoryById(categoryId);
+                if(prodCategory != null)
+                {
+                    vo.setProdCategory(prodCategory.getName());
+                }
+            }
+            return vo;
+        }).collect(Collectors.toList());
+        return getDataTable(result);
+    }
+
+    /**
      * 导出产品报价信息列表
      */
     @RequiresPermissions("product:history:export")
@@ -169,6 +197,75 @@ public class ProdQuotationHistoryController extends BaseController
         prodQuotationHistory.setCreateBy(getLoginName());
         prodQuotationHistory.setStatus(CommonStatus.OK.getCode());
         return toAjax(prodQuotationHistoryService.insertProdQuotationHistory(prodQuotationHistory));
+    }
+
+    /**
+     * 新增保存产品报价信息 (小程序)
+     */
+    @Log(title = "产品报价信息", businessType = BusinessType.INSERT)
+    @PostMapping("/addWeapp")
+    @ResponseBody
+    public AjaxResult addSaveWeapp(ProdQuotationHistory prodQuotationHistory)
+    {
+        if(!quotationBlackUserService.checkQuotationBlackUser(getUserId(), prodQuotationHistory.getDeptId()))
+        {
+            return error("商家把你加入了黑名单无法报价");
+        }
+        if (prodQuotationHistory.getProdId() != null && prodQuotationHistory.getBatchId() != null)
+        {
+            com.ruoyi.product.domain.BatchProduct bp = batchProductService.selectByBatchAndProd(prodQuotationHistory.getBatchId(), prodQuotationHistory.getProdId());
+            if (bp == null)
+            {
+                return error("批次未发布该产品");
+            }
+            if (prodQuotationHistory.getCount() != null)
+            {
+                if (prodQuotationHistory.getCount() > bp.getPublishCount())
+                {
+                    return error("报价数量不能超过发布数量");
+                }
+            }
+            prodQuotationHistory.setBatchProductId(bp.getId());
+        }
+        prodQuotationHistory.setQuoterUserId(getUserId());
+        com.ruoyi.common.core.domain.entity.SysUser sysUser = getSysUser();
+        if (sysUser != null && sysUser.getDeptId() != null)
+        {
+            prodQuotationHistory.setDeptId(sysUser.getDeptId());
+        }
+        prodQuotationHistory.setCreateTime(Calendar.getInstance().getTime());
+        prodQuotationHistory.setName(prodQuotationHistory.getName().split("-")[0]);
+        prodQuotationHistory.setCreateBy(getLoginName());
+        prodQuotationHistory.setStatus(CommonStatus.OK.getCode());
+        return toAjax(prodQuotationHistoryService.insertProdQuotationHistory(prodQuotationHistory));
+    }
+
+    /**
+     * 查询我的报价信息 (小程序)
+     */
+    @PostMapping("/quoter/listWeapp")
+    @ResponseBody
+    public TableDataInfo quoterlistWeapp(ProdQuotationHistory prodQuotationHistory)
+    {
+        startPage();
+        prodQuotationHistory.setQuoterUserId(getUserId());
+        List<ProdQuotationHistory> list = prodQuotationHistoryService.selectProdQuotationHistoryList(prodQuotationHistory);
+        List<ProdQuotationHistoryVO> result = list.stream().map(i->{
+            ProdQuotationHistoryVO vo  =new  ProdQuotationHistoryVO();
+            BeanUtils.copyProperties(i,vo);
+            ProdInfo prodInfo = prodInfoService.selectProdInfoById(i.getProdId());
+            if(prodInfo!= null)
+            {
+                final Long categoryId = prodInfo.getCategoryId();
+                final ProdCategory prodCategory = prodCategoryService.selectProdCategoryById(categoryId);
+                if(prodCategory!=null)
+                {
+                    vo.setProdCategory(prodCategory.getName());
+                }
+            }
+            return vo;
+        }).collect(Collectors.toList());
+        return getDataTable(result);
     }
 
     /**

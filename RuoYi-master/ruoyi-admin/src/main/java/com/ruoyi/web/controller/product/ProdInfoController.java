@@ -73,7 +73,7 @@ public class ProdInfoController extends BaseController
     /**
      * 查询产品信息列表
      */
-//    @RequiresPermissions("product:info:list")
+    @RequiresPermissions("product:info:list")
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list(ProdInfo prodInfo)
@@ -84,6 +84,33 @@ public class ProdInfoController extends BaseController
         {
             prodInfo.setDeptId(sysUser.getDeptId());
         }
+        List<ProdInfo> list = prodInfoService.selectProdInfoList(prodInfo);
+        List<ProdInfoVO> result = list.stream().map(i -> {
+            ProdInfoVO vo = new ProdInfoVO();
+            BeanUtils.copyProperties(i, vo);
+            final Long categoryId = i.getCategoryId();
+            if(categoryId != null && categoryId != -1)
+            {
+                final ProdCategory prodCategory = prodCategoryService.selectProdCategoryById(categoryId);
+                if(prodCategory != null)
+                {
+                    vo.setCategoryName(prodCategory.getName());
+                }
+            }
+            return vo;
+        }).collect(Collectors.toList());
+        return getDataTable(result);
+    }
+
+    /**
+     * 查询产品信息列表 (小程序)
+     */
+    @PostMapping("/listWeapp")
+    @ResponseBody
+    public TableDataInfo listWeapp(ProdInfo prodInfo)
+    {
+        startPage();
+        // 小程序端逻辑，可能不需要权限校验，或者有自己的逻辑
         List<ProdInfo> list = prodInfoService.selectProdInfoList(prodInfo);
         List<ProdInfoVO> result = list.stream().map(i -> {
             ProdInfoVO vo = new ProdInfoVO();

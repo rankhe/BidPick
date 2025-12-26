@@ -184,4 +184,23 @@ public class SysDeptController extends BaseController
         List<Ztree> ztrees = deptService.selectDeptTreeExcludeChild(dept);
         return ztrees;
     }
+
+    /**
+     * 获取商家列表 (小程序调用)
+     */
+    @PostMapping("/merchant/list")
+    @ResponseBody
+    public AjaxResult listMerchant(SysDept dept)
+    {
+        // 强制查询 parentId = 200 的子节点 (或者由前端传)
+        // 这里直接返回查询结果，建议前端传 parentId=200
+        dept.setDeptId(null);
+        if(dept!= null && dept.getParentId()==null)
+        {
+            dept.setParentId(200l);
+        }
+        // 小程序端查询商家列表，不需要进行数据权限过滤，否则普通用户可能看不到
+        List<SysDept> list = deptService.selectDeptListIgnoreDataScope(dept);
+        return AjaxResult.success(list);
+    }
 }

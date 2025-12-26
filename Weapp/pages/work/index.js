@@ -1,5 +1,5 @@
 const { ensureLogin } = require('../../utils/guard')
-const { getProductList } = require('../../api/product')
+const { listDept } = require('../../api/system/dept')
 const { hasPermi } = require('../../utils/permission')
 
 Page({
@@ -27,9 +27,8 @@ Page({
   },
   loadMerchants() {
     this.setData({ loading: true })
-    getProductList().then(res => {
-      const data = Array.isArray(res) ? res : (res.data || [])
-      this.setData({ merchantList: data })
+    listDept({ parentId: 200 }).then(res => {
+      this.setData({ merchantList: res.data || [] })
     }).catch(err => {
       console.error('获取商家列表失败:', err)
       // wx.showToast({ icon: 'none', title: '获取商家列表失败' })

@@ -5,7 +5,7 @@ const request = require('../utils/request')
 // List Products
 export function listProduct(query) {
   return request({
-    url: '/product/info/list',
+    url: '/product/info/listWeapp',
     method: 'post',
     data: query
   })
@@ -14,7 +14,7 @@ export function listProduct(query) {
 // Get Product Detail (via list)
 export function getProduct(id) {
   return request({
-    url: '/product/info/list',
+    url: '/product/info/listWeapp',
     method: 'post',
     data: { id: id }
   })
@@ -105,7 +105,7 @@ export function addCategory(data) {
 
 export function listQuote(query) {
   return request({
-    url: '/product/history/list',
+    url: '/product/history/listWeapp',
     method: 'post',
     data: query
   })
