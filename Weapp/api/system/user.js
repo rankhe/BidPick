@@ -1,15 +1,6 @@
 const request = require('../../utils/request')
 const upload = require('../../utils/upload')
 
-function updateUserPwd(oldPassword, newPassword) {
-  const data = { oldPassword, newPassword }
-  return request({
-    url: '/system/user/profile/updatePwd',
-    method: 'PUT',
-    params: data
-  })
-}
-
 function getUserProfile() {
   return request({
     url: '/system/user/profile',
@@ -34,7 +25,6 @@ function uploadAvatar(data) {
 }
 
 module.exports = {
-  updateUserPwd,
   getUserProfile,
   updateUserProfile,
   uploadAvatar

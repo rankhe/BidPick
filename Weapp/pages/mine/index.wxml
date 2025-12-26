@@ -10,7 +10,6 @@
       
       <!-- 以下是已登录用户才能看到的内容 -->
       <navigator url="/pages/mine/info/index" class="item" wx:if="{{username !== '未登录用户'}}">个人资料</navigator>
-      <navigator url="/pages/mine/pwd/index" class="item" wx:if="{{username !== '未登录用户'}}">修改密码</navigator>
       <navigator url="/pages/mine/avatar/index" class="item" wx:if="{{username !== '未登录用户'}}">头像设置</navigator>
       <button class="item" bindtap="logout" wx:if="{{username !== '未登录用户'}}">退出登录</button>
     </view>
