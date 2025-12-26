@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.product.mapper.ProdRegionMapper">
+    
+    <resultMap type="ProdRegion" id="ProdRegionResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="introduction"    column="introduction"    />
+        <result property="status"    column="status"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="creator"    column="creator"    />
+        <result property="updator"    column="updator"    />
+    </resultMap>
+
+    <sql id="selectProdRegionVo">
+        select id, name, introduction, status, owner_user_id, update_time, create_time, creator, updator from prod_region
+    </sql>
+
+    <select id="selectProdRegionList" parameterType="ProdRegion" resultMap="ProdRegionResult">
+        <include refid="selectProdRegionVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="introduction != null  and introduction != ''"> and introduction = #{introduction}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="creator != null  and creator != ''"> and creator = #{creator}</if>
+            <if test="updator != null  and updator != ''"> and updator = #{updator}</if>
+        </where>
+    </select>
+    
+    <select id="selectProdRegionById" parameterType="Long" resultMap="ProdRegionResult">
+        <include refid="selectProdRegionVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertProdRegion" parameterType="ProdRegion" useGeneratedKeys="true" keyProperty="id">
+        insert into prod_region
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="introduction != null">introduction,</if>
+            <if test="status != null">status,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="creator != null">creator,</if>
+            <if test="updator != null">updator,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="introduction != null">#{introduction},</if>
+            <if test="status != null">#{status},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="creator != null">#{creator},</if>
+            <if test="updator != null">#{updator},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProdRegion" parameterType="ProdRegion">
+        update prod_region
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="introduction != null">introduction = #{introduction},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="updator != null">updator = #{updator},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProdRegionById" parameterType="Long">
+        delete from prod_region where id = #{id}
+    </delete>
+
+    <delete id="deleteProdRegionByIds" parameterType="String">
+        delete from prod_region where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

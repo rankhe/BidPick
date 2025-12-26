@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增产品报价信息')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-history-add">
+            <input name="quoterUserMobile"  th:value="${phoneNumber}" type="hidden">
+            <input id="count" name="count" type="hidden">
+            <div class="form-group">
+                <label class="col-sm-3 control-label  is-required">供货发布方：</label>
+                <div class="col-sm-8">
+                    <select id="deptId" name="deptId" class="form-control" onchange="loadProdBatch()">
+                        <option th:each="publish:${publishes}" th:value="${publish.deptId}" th:text="${publish.userName}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">产品批次：</label>
+                <div class="col-sm-8">
+<!--                    <input name="batchId" class="form-control" type="text" required>-->
+                    <select id="batchId" name="batchId" class="form-control" onchange="loadProdInfo()">
+                    </select>
+                    <input name="batchNo" id="batchNo" class="form-control" type="hidden" >
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">产品名称/型号：</label>
+                <div class="col-sm-8">
+<!--                    <input name="name" class="form-control" type="text" required>-->
+                    <select id="prodId" name="prodId" class="form-control" required onchange="setProdName()">
+
+                    </select>
+                    <input name="name" id="name" class="form-control" type="hidden" >
+                </div>
+            </div>
+
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">报价人手机号：</label>
+                <div class="col-sm-8">
+                    <input  class="form-control" th:value="${phoneNumber}" type="text" required disabled>
+                </div>
+            </div>
+
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">报价人微信昵称：</label>
+                <div class="col-sm-8">
+                    <input name="nickName" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">数量：</label>
+                <div class="col-sm-8">
+                    <input id="count1" name="count1" class="form-control" type="text" disabled>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label required">报单价：</label>
+                <div class="col-sm-8">
+                    <input name="price" class="form-control" type="text" required>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "product/history";
+        var data ;
+
+        $(document).ready(function() {
+            $('#deptId').prepend('<option value="-1" selected>请选择供应商</option>');
+        });
+        $("#form-history-add").validate({
+            onchange: true,
+            rules: {
+                prodId: {
+                    remote: {
+                        url: prefix + "/checkProdHistoryUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "prodId": function () {
+                                return $.common.trim($("#prodId").val());
+                            },
+                            "batchNo": function () {
+                                return $.common.trim($("#batchNo").val());
+                            }
+                        }
+                    }
+                },
+                deptId: {
+                    remote: {
+                        url: prefix + "/checkQuotationBlackUser",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "deptId": function () {
+                                return $.common.trim($("#deptId").val());
+                            }
+                        }
+                    }
+                },
+            },
+            messages: {
+                "prodId": {
+                    remote: "该商品您已经报过价了"
+                },
+                "deptId": {
+                    remote: "当前供货商把你加入了黑名单，无法报价"
+                }
+            },
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-history-add').serialize());
+            }
+        }
+
+        //加载产品批次
+        function loadProdBatch(){
+            var publisher = $("#deptId").val();
+            var pub = $.common.isEmpty(publisher) ? 101: publisher;
+            var url = ctx + "product/batch/list/" + pub;
+            var config = {
+                url: url,
+                type: "post",
+                dataType: "json",
+                data: null,
+                beforeSend: function () {
+                    $.modal.loading("正在处理中，请稍候...");
+                },
+                success: function(result) {
+                    var selectElement = $('#batchId');
+                    selectElement.empty();
+                    // Iterate over the array of objects
+                    $.each(result, function(index, value) {
+                        var option = $('<option></option>');
+                        if(index ==0)
+                        {
+                            var firstOp = $('<option></option>');
+                            firstOp.attr('value', -1);
+                            firstOp.text("请选择批次");
+                            selectElement.append(firstOp);
+                        }
+                        option.attr('value', value.id);
+                        option.text(value.batchNo);
+                        selectElement.append(option);
+                    });
+                    $.modal.closeLoading();
+                }
+            };
+            $.ajax(config);
+
+            loadProdInfo();
+        }
+
+        function loadProdInfo(){
+            var batchNo = $("#batchNo").val();
+            var url = ctx + "product/info/list";
+            var data = { "batchNo": batchNo };
+            var config = {
+                url: url,
+                type: "post",
+                dataType: "json",
+                data: data,
+                beforeSend: function () {
+                    $.modal.loading("正在处理中，请稍候...");
+                },
+                success: function(result) {
+                    var selectElement = $('#prodId');
+                    selectElement.empty();
+                    $.each(result.rows, function(index, value) {
+                        if(index ==0)
+                        {
+                            var firstOp = $('<option></option>');
+                            firstOp.attr('value', -1);
+                            firstOp.text("请选择型号");
+                            selectElement.append(firstOp);
+                        }
+                        var option = $('<option></option>');
+                        option.attr('value', value.id);
+                        if(value.categoryName!='' && value.categoryName!= null)
+                        {
+                            option.text(value.name+'-'+value.categoryName);
+                        }
+                        else
+                        {
+                            option.text(value.name);
+                        }
+
+                        selectElement.append(option);
+                    });
+                    $.modal.closeLoading();
+                }
+            };
+            $.ajax(config)
+            var batchId = $("#batchId").val();
+            if(batchId != -1)
+            {
+                var batchNumber = $("#batchId option:selected").text();
+                $("#batchNo").val(batchNumber);
+            }
+        }
+
+        function setProdName()
+        {
+            // debugger;
+            var prodId = $("#prodId").val();
+            if(prodId != -1)
+            {
+                var prodName = $("#prodId option:selected").text();
+                $("#name").val(prodName);
+            }
+
+            var url = ctx + "product/info/list";
+            var data = { "prodId": prodId };
+            var config = {
+                url: url,
+                type: "post",
+                dataType: "json",
+                data: data,
+                beforeSend: function () {
+                    $.modal.loading("正在处理中，请稍候...");
+                },
+                success: function(result) {
+                    $.each(result.rows, function(index, value) {
+                        $("#count").val(value.count);
+                        $("#count1").val(value.count);
+                    });
+                    $.modal.closeLoading();
+                }
+            };
+            $.ajax(config)
+        }
+
+    </script>
+</body>
+</html>

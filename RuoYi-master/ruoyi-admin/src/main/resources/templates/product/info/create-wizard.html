@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('创建商品向导')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="ibox">
+                <div class="ibox-title">品牌树</div>
+                <div class="ibox-content" id="brandTree"></div>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div class="btn-group-sm" id="toolbarRight" role="group">
+                <a class="btn btn-default" id="panelTitle">请选择左侧节点</a>
+            </div>
+            <table id="right-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var rightOpt = {
+        toolbar: '#toolbarRight',
+        pagination: true,
+        sidePagination: 'server',
+        clickToSelect: true,
+        columns: [
+            { field: 'id', title: 'ID', visible: true },
+            { field: 'name', title: '名称' }
+        ]
+    };
+    $(function(){
+        loadBrands();
+    });
+    function loadBrands(){
+        $.get(ctx + 'product/tree/brand', function(list){
+            var html = '<ul class="list-group">';
+            $.each(list, function(i, b){
+                html += '<li class="list-group-item"><a href="#" onclick="loadCategories('+b.id+', \''+b.name+'\')">'+b.name+'</a></li>';
+            });
+            html += '</ul>';
+            $('#brandTree').html(html);
+            $('#panelTitle').text('品牌列表');
+            $('#right-table').bootstrapTable($.extend({}, rightOpt, { data: list }));
+        });
+    }
+    function loadCategories(brandId, brandName){
+        $.get(ctx + 'product/tree/category/' + brandId, function(list){
+            $('#panelTitle').text('['+brandName+'] 分类列表');
+            $('#right-table').bootstrapTable('destroy').bootstrapTable($.extend({}, rightOpt, {
+                data: list,
+                columns: [
+                    { field: 'id', title: 'ID', visible: true },
+                    { field: 'name', title: '分类名称' },
+                    { field: 'level', title: '层级' },
+                    { field: 'parentId', title: '父ID' },
+                    { field: 'id', title: '查看产品', formatter: function(v,row){
+                        return '<a href="#" onclick="loadProducts('+row.id+', \''+row.name+'\')">查看产品</a>';
+                    }}
+                ]
+            }));
+        });
+    }
+    function loadProducts(categoryId, categoryName){
+        $.get(ctx + 'product/tree/product/' + categoryId, function(list){
+            $('#panelTitle').text('['+categoryName+'] 产品列表');
+            $('#right-table').bootstrapTable('destroy').bootstrapTable($.extend({}, rightOpt, {
+                data: list,
+                columns: [
+                    { field: 'id', title: 'ID', visible: true },
+                    { field: 'name', title: '名称/型号' },
+                    { field: 'brandName', title: '品牌' },
+                    { field: 'categoryId', title: '分类ID' },
+                    { field: 'id', title: '创建', formatter: function(v,row){
+                        return '<a href="'+ (ctx + 'product/info/add') +'" target="_blank">创建</a>';
+                    }}
+                ]
+            }));
+        });
+    }
+</script>
+</body>
+</html>

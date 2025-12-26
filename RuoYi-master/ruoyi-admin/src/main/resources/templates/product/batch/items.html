@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('批次商品维护')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>批次信息</h5>
+                </div>
+                <div class="ibox-content">
+                    <p>
+                        <span>批次编码：</span><strong th:text="${batch != null ? batch.batchNo : '未知'}"></strong>&nbsp;&nbsp;
+                        <span>截止时间：</span><strong id="endTimeText">-</strong>&nbsp;&nbsp;
+                        <span>说明：</span><strong th:text="${batch != null ? batch.remark : '-'}"></strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <form id="items-form">
+                <input type="hidden" name="batchId" th:value="${batchId}"/>
+            </form>
+            <div class="btn-group-sm" id="toolbarItems" role="group">
+                <a class="btn btn-success" shiro:hasPermission="product:batch:items:add" id="btnAddItems">
+                    <i class="fa fa-plus"></i> 添加商品
+                </a>
+                <a class="btn btn-danger multiple disabled" shiro:hasPermission="product:batch:items:remove" onclick="removeItems()">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" shiro:hasPermission="product:batch:items:export" onclick="$.table.exportExcel('items-form')">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <table id="items-table"></table>
+        </div>
+        <div class="col-sm-12" id="add-panel" style="display:none;margin-top:20px;">
+            <div class="btn-group-sm" role="group">
+                <a class="btn btn-default">选择商品（可多选并填写数量）</a>
+                <a class="btn btn-primary" onclick="submitAdd()">提交添加</a>
+                <a class="btn btn-warning" onclick="toggleAdd(false)">关闭</a>
+            </div>
+            <table id="products-table"></table>
+        </div>
+    </div>
+    <input type="hidden" id="hiddenBatchId" th:value="${batchId}"/>
+    <th:block th:include="include :: footer" />
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "product/batch/items";
+    var batchId = [[${batchId}]];
+    var endTimeVal = [[${batch != null ? batch.endTime : null}]];
+    $(function(){
+        if(endTimeVal){ $('#endTimeText').text(moment(endTimeVal).format('YYYY-MM-DD HH:mm:ss')); }
+        initItemsTable();
+        $("#btnAddItems").on("click", function(){ toggleAdd(true); initProductsTable(); });
+    });
+    function initItemsTable(){
+        var options = {
+            id: "items-table",
+            url: prefix + "/list",
+            method: 'post',
+            exportUrl: prefix + "/export",
+            toolbar: "toolbarItems",
+            modalName: "批次商品",
+            showRefresh: true,
+            showColumns: true,
+            pagination: true,
+            sidePagination: "server",
+            clickToSelect: true,
+            columns: [
+                { checkbox: true },
+                { field: 'id', title: 'ID', visible: false },
+                { field: 'name', title: '名称/型号' },
+                { field: 'brandName', title: '品牌' },
+                { field: 'categoryName', title: '分类' },
+                { field: 'publishCount', title: '发布数量' },
+                { field: 'lockedCount', title: '已锁定数量' },
+                { title: '操作', align: 'center', formatter: function(value, row){
+                    var actions = [];
+                    actions.push('<a class="btn btn-primary btn-xs" onclick="editCount('+row.id+','+row.publishCount+','+row.lockedCount+')"><i class="fa fa-edit"></i>修改数量</a> ');
+                    actions.push('<a class="btn btn-danger btn-xs" onclick="removeItems('+row.id+')"><i class="fa fa-remove"></i>删除</a>');
+                    return actions.join('');
+                }}
+            ]
+        };
+        $.table.init(options);
+    }
+    function toggleAdd(show){
+        $("#add-panel").css("display", show ? "block" : "none");
+    }
+    function initProductsTable(){
+        var opt = {
+            url: ctx + 'product/info/list',
+            method: 'post',
+            modalName: '商品',
+            showRefresh: true,
+            showColumns: true,
+            pagination: true,
+            sidePagination: 'server',
+            clickToSelect: true,
+            columns: [
+                { checkbox: true },
+                { field: 'id', title: 'ID', visible: true },
+                { field: 'name', title: '名称/型号' },
+                { field: 'brandName', title: '品牌' },
+                { field: 'categoryName', title: '分类' },
+                { field: 'count', title: '添加数量', formatter: function(value,row){
+                        return '<input class="form-control" type="number" min="0" data-id="'+row.id+'" value="'+ (value || 0) +'">';
+                    } }
+            ]
+        };
+        $('#products-table').bootstrapTable(opt);
+    }
+    function submitAdd(){
+        var selections = $('#products-table').bootstrapTable('getSelections');
+        if (!selections || selections.length === 0){ $.modal.msgWarning("请选择商品"); return; }
+        var items = [];
+        var confirm = false;
+        $.each(selections, function(i, row){
+            var cnt = $("input[data-id='"+ row.id +"']").val();
+            if (!cnt) { cnt = 1; }
+            var num = parseInt(cnt);
+            if (isNaN(num) || num <= 0){ num = 1; }
+            if (row.count && num > row.count) {
+                confirm = true;
+            }
+            items.push({ prodTemplateId: row.id, count: num });
+        });
+        if (confirm) {
+            $.modal.confirm("商品数量总数量大于商品的数量，确定继续吗？", function() {
+                doSubmitAdd(items);
+            });
+        } else {
+            doSubmitAdd(items);
+        }
+    }
+
+    function doSubmitAdd(items) {
+        $.operate.post(prefix + '/add', { batchId: batchId, items: JSON.stringify(items) }, function(res){
+            $.operate.successCallback(res);
+            $('#items-table').bootstrapTable('refresh');
+            toggleAdd(false);
+        });
+    }
+    function submitHandler(index, layero){
+        if ($("#add-panel").is(":visible")) {
+            submitAdd();
+        } else {
+            $.modal.msgWarning("请先点击“添加商品”，勾选商品后再确定");
+        }
+    }
+    function editCount(id, publishCount, lockedCount){
+        $.modal.prompt("请输入新的发布数量（不得小于已锁定数量："+lockedCount+"）", publishCount, function(value){
+            var num = parseInt(value);
+            if (isNaN(num) || num < 0){ $.modal.msgError("数量非法"); return true; }
+            $.operate.post(prefix + '/update', { id: id, publishCount: num }, function(res){
+                $.operate.successCallback(res);
+                $('#items-table').bootstrapTable('refresh');
+            });
+        });
+    }
+    function removeItems(id){
+        var ids = id ? id.toString() : $.table.selectColumns("id").join();
+        if (!ids){ $.modal.msgWarning("请选择要删除的条目"); return; }
+        $.modal.confirm("确认删除选中的条目？", function(){
+            $.operate.post(prefix + '/remove', { ids: ids }, function(res){
+                $.operate.successCallback(res);
+                $('#items-table').bootstrapTable('refresh');
+            });
+        });
+    }
+</script>
+</body>
+</html>

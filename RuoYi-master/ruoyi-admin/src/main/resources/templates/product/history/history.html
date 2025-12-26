@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('产品报价信息列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>产品名称：</label>
+                                <input type="text" name="name"/>
+                            </li>
+<!--                            <li>-->
+<!--                                <label>产品分类id：</label>-->
+<!--                                <input type="text" name="prodId"/>-->
+<!--                            </li>-->
+                            <li>
+                                <label style="width: auto">报价手机号：</label>
+                                <input type="text" name="userId"/>
+                            </li>
+                            <li>
+                                <label>产品批次：</label>
+                                <input type="text" name="batchId"/>
+                            </li>
+<!--                            <li>-->
+<!--                                <label>报价人微信昵称：</label>-->
+<!--                                <input type="text" name="nickName"/>-->
+<!--                            </li>-->
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+<!--                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="product:history:add">-->
+<!--                    <i class="fa fa-plus"></i> 添加-->
+<!--                </a>-->
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="product:history:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="product:history:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="product:history:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+                <!-- 打印网页时通过hidden-print隐藏元素 -->
+<!--                <div class="text-right hidden-print">-->
+                    <button class="btn btn-primary" onclick="printPage()"><i class="fa fa-print"></i> 打印</button>
+<!--                </div>-->
+
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('product:history:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('product:history:remove')}]];
+        var updateFlag = [[${@permission.hasPermi('product:history:update')}]];
+        var prefix = ctx + "product/history";
+        var staData = [[${@dict.getType('pro_qutation_sta')}]];
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                updateStatusUrl:prefix + "/updateStatus",
+                exportUrl: prefix + "/export",
+                modalName: "收到的报价",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '${comment}',
+                    visible: false
+                },
+                {
+                    field: 'name',
+                    title: '产品名称'
+                },
+                {
+                    field: 'prodId',
+                    title: '产品id'
+                },
+                    {
+                        field: 'prodCategory',
+                        title: '产品分类'
+                    },
+                {
+                    field: 'quoterUserMobile',
+                    title: '报价人手机号'
+                },
+                {
+                    field: 'batchNo',
+                    title: '产品批次ID'
+                },
+                {
+                    field: 'nickName',
+                    title: '报价人微信昵称'
+                },
+                {
+                    field: 'count',
+                    title: '意向数量'
+                },
+                {
+                    field: 'price',
+                    title: '报单价'
+                },
+                {
+                    field: 'status',
+                    title: '状态',
+                    formatter: function(value, item, index) {
+                        return $.table.selectDictLabel(staData, item.status);
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+
+                        // actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        if(row.status!=2)
+                        {
+                            actions.push('&nbsp;&nbsp;<a class="btn btn-warning btn-xs ' + updateFlag + '" href="javascript:void(0)" onclick="award(\'' + row.id + '\')"><i class="fa fa-star"></i>中标</a>');
+                        }
+                        else
+                        {
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.sendNotice(\'' + row.id + '\',\''+row.quoterUserMobile+'\')"><i class="fa fa-edit"></i>发送提醒</a> ');
+                        }
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+        function printPage() {
+            $.table.hideColumn('11');
+            $(".fixed-table-toolbar").hide();
+            $(".fixed-table-pagination").hide();
+            window.print();
+            $(".fixed-table-toolbar").show();
+            $(".fixed-table-pagination").show();
+            $.table.showColumn('11');
+        }
+
+        function award(id){
+            $.modal.confirm('确定将该条记录设为中标吗？', function(){
+                $.operate.post(prefix + '/award', {id:id});
+            });
+        }
+    </script>
+</body>
+</html>

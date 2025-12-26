@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增产品信息')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body class="white-bg">
+    <div class="ui-layout-west">
+        <div class="box box-main">
+            <div class="box-header">
+                <div class="box-title"><i class="fa fa-sitemap"></i> 品牌树</div>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" id="btnExpand" title="展开" style="display:none;"><i class="fa fa-chevron-up"></i></button>
+                    <button type="button" class="btn btn-box-tool" id="btnCollapse" title="折叠"><i class="fa fa-chevron-down"></i></button>
+                    <button type="button" class="btn btn-box-tool" id="btnRefresh" title="刷新"><i class="fa fa-refresh"></i></button>
+                </div>
+            </div>
+            <div class="ui-layout-content">
+                <div id="tree" class="ztree"></div>
+            </div>
+        </div>
+    </div>
+    <div class="ui-layout-center">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <div class="btn-group-sm" id="wizardToolbar" role="group" style="margin-bottom:10px;">
+            <a class="btn btn-info" th:href="@{/product/info/createWizard}" target="_blank"><i class="fa fa-sitemap"></i> 品牌树向导</a>
+        </div>
+        <form class="form-horizontal m" id="form-info-add">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">品牌：</label>
+                <div class="col-sm-8">
+                    <select id="brandName" name="brandName" class="form-control">
+                        <option th:each="brand:${brands}" th:value="${brand.name}" th:text="${brand.name}" th:attr="data-id=${brand.id}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">区域：</label>
+                <div class="col-sm-8">
+                    <select id="region" name="region" class="form-control">
+                        <option th:each="region:${regions}" th:value="${region.name}" th:text="${region.name}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">名称(型号)：</label>
+                <div class="col-sm-8">
+                    <input name="name" class="form-control" type="text" required>
+                </div>
+            </div>
+<!--            <div class="form-group">    -->
+<!--                <label class="col-sm-3 control-label is-required">产品分类id：</label>-->
+<!--                <div class="col-sm-8">-->
+<!--                    <input name="categoryId" class="form-control" type="text" required>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="col-md-12">-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">产品分类：</label>
+                <div class="col-sm-8">
+                    <select id="categoryId" name="categoryId" class="form-control">
+                        <option th:each="category:${categories}" th:value="${category.id}" th:text="${category.name}" th:disabled="${category.status != '1'}"></option>
+                    </select>
+                </div>
+            </div>
+<!--            </div>-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">数量：</label>
+                <div class="col-sm-8">
+                    <input name="count" class="form-control" type="text">
+                </div>
+            </div>
+<!--            <div class="form-group">    -->
+<!--                <label class="col-sm-3 control-label">展示顺序：</label>-->
+<!--                <div class="col-sm-8">-->
+<!--                    <input name="idx" class="form-control" type="text">-->
+<!--                </div>-->
+<!--            </div>-->
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: layout-latest-js" />
+    <th:block th:include="include :: ztree-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "product/info"
+        $(function(){
+            var panehHidden = false;
+            if ($(this).width() < 769) { panehHidden = true; }
+            $('body').layout({ initClosed: panehHidden, west__size: 185 });
+            initTree();
+            $("#categoryId").prepend("<option value='' selected>请选择分类</option>");
+            $("#brandName").prepend("<option value='' selected>请选择品牌</option>");
+            $("#region").prepend("<option value='' selected>请选择区域</option>");
+            var brandNameToId = {};
+            $("#brandName option").each(function(){
+                var nm = $(this).val();
+                var id = $(this).attr("data-id");
+                if (nm && id) { brandNameToId[nm] = id; }
+            });
+            $("#brandName").on("change", function(){
+                var $opt = $(this).find("option:selected");
+                var bid = $opt.attr("data-id") || brandNameToId[$opt.val()];
+                if (bid) {
+                    loadCategories(bid);
+                } else {
+                    $("#categoryId").empty().append("<option value='' selected>请选择分类</option>");
+                }
+            });
+        });
+        function initTree(){
+            var url = ctx + "product/tree/zTree";
+            var options = { url: url, expandLevel: 2, onClick: zOnClick };
+            $.tree.init(options);
+            function zOnClick(event, treeId, treeNode){
+                if (treeNode.type === 'brand'){
+                    // 品牌选择
+                    $("#brandName").val(treeNode.name);
+                    loadCategories(treeNode.realId);
+                } else if (treeNode.type === 'category'){
+                    // 分类选择，顺带设置品牌
+                    $("#brandName").val($._tree.getNodeByParam('id', 100000 + treeNode.brandId).name);
+                    loadCategories(treeNode.brandId, treeNode.realId);
+                }
+            }
+        }
+        function loadCategories(brandId, selectedId){
+            var url = ctx + "product/tree/category/" + brandId;
+            $.getJSON(url, function(list){
+                var $sel = $("#categoryId");
+                $sel.empty().append("<option value='' selected>请选择分类</option>");
+                if (Array.isArray(list)) {
+                    for (var i = 0; i < list.length; i++) {
+                        var c = list[i];
+                        $sel.append("<option value='"+ c.id +"'>"+ c.name +"</option>");
+                    }
+                }
+                if (selectedId) {
+                    $sel.val(String(selectedId));
+                }
+            });
+        }
+        $('#btnExpand').click(function(){ $._tree.expandAll(true); $(this).hide(); $('#btnCollapse').show(); });
+        $('#btnCollapse').click(function(){ $._tree.expandAll(false); $(this).hide(); $('#btnExpand').show(); });
+        $('#btnRefresh').click(function(){ initTree(); });
+        $("#form-info-add").validate({
+            focusCleanup: true
+        });
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-info-add').serialize());
+            }
+        }
+    </script>
+    </div>
+    </div>
+</body>
+</html>

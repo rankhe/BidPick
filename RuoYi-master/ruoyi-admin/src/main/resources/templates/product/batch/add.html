@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增批次信息')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-batch-add">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">批次编码：</label>
+                <div class="col-sm-8">
+                    <input name="batchNo" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label font-normal is-required">报价截止时间</label>
+                <div class="date col-sm-8">
+<!--                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>-->
+                    <input type="text" class="form-control" name="endTime" id="endTime" placeholder="yyyy-MM-dd HH:mm:ss">
+                </div>
+            </div>
+<!--            <div class="form-group">    -->
+<!--                <label class="col-sm-3 control-label is-required">所属人：</label>-->
+<!--                <div class="col-sm-8">-->
+<!--                    <input name="ownerId" class="form-control" type="text" required>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="form-group">    -->
+<!--                <label class="col-sm-3 control-label">已报价人数：</label>-->
+<!--                <div class="col-sm-8">-->
+<!--                    <input name="quotation" class="form-control" type="text">-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">批次说明介绍：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark" class="form-control"></textarea>
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="btn-group-sm" id="toolbarItems" role="group">
+                    <a class="btn btn-default">选择发布商品（可多选并填写数量）</a>
+                </div>
+                <table id="items-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "product/batch"
+        $("#form-batch-add").validate({
+            focusCleanup: true
+        });
+        $(function() {
+            $("#endTime").datetimepicker({
+                format: "yyyy-mm-dd hh:ii:ss",
+                autoclose: true
+            })
+        });
+        function submitHandler() {
+            if (!$.validate.form()) { return; }
+            var selections = $('#items-table').bootstrapTable('getSelections');
+            var items = [];
+            $.each(selections, function(i, row){
+                var cnt = $("input[data-id='"+ row.id +"']").val();
+                if (!cnt) { cnt = 0; }
+                items.push({ prodTemplateId: row.id, count: parseInt(cnt) });
+            });
+            var data = $('#form-batch-add').serializeArray();
+            var payload = {};
+            $.each(data, function(){ payload[this.name] = this.value; });
+            $.ajax({
+                url: prefix + '/publish',
+                type: 'POST',
+                data: $.extend(payload, { items: JSON.stringify(items) }),
+                success: function(res){ $.operate.successCallback(res); }
+            });
+        }
+
+        $(function(){
+            var opt = {
+                url: ctx + 'product/info/list',
+                method: 'post',
+                modalName: '商品',
+                toolbar: '#toolbarItems',
+                showRefresh: true,
+                showColumns: true,
+                pagination: true,
+                sidePagination: 'server',
+                clickToSelect: true,
+                columns: [
+                    { checkbox: true },
+                    { field: 'id', title: 'ID', visible: true },
+                    { field: 'name', title: '名称/型号' },
+                    { field: 'brandName', title: '品牌' },
+                    { field: 'categoryName', title: '分类' },
+                    { field: 'count', title: '发布数量', formatter: function(value,row){
+                        return '<input class="form-control" type="number" min="0" data-id="'+row.id+'" value="'+ (value || 0) +'">';
+                    } }
+                ]
+            };
+            $('#items-table').bootstrapTable(opt);
+        });
+    </script>
+</body>
+</html>

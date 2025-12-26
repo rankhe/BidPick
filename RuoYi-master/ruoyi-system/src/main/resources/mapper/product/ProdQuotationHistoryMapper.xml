@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.product.mapper.ProdQuotationHistoryMapper">
+    
+    <resultMap type="ProdQuotationHistory" id="ProdQuotationHistoryResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="prodId"    column="prod_id"    />
+        <result property="quoterUserId"    column="quoter_user_id"    />
+        <result property="quoterUserMobile"    column="quoter_user_mobile"    />
+        <result property="batchId"    column="batch_id"    />
+        <result property="batchNo"    column="batch_no"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="count"    column="count"    />
+        <result property="price"    column="price"    />
+        <result property="status"    column="status"    />
+        <result property="awardStatus"    column="award_status"    />
+        <result property="awardTime"    column="award_time"    />
+        <result property="batchProductId"    column="batch_product_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectProdQuotationHistoryVo">
+        select id, name, prod_id, quoter_user_id,quoter_user_mobile,owner_user_id, batch_id,batch_no, nick_name, count, price, status, award_status, award_time, batch_product_id, dept_id, update_time, create_time
+        from prod_quotation_history
+    </sql>
+
+    <select id="selectProdQuotationHistoryList" parameterType="ProdQuotationHistory" resultMap="ProdQuotationHistoryResult">
+        <include refid="selectProdQuotationHistoryVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="prodId != null "> and prod_id = #{prodId}</if>
+            <if test="quoterUserMobile != null and quoterUserMobile != ''"> and quoter_user_mobile = #{quoterUserMobile}</if>
+            <if test="quoterUserId != null "> and quoter_user_id = #{quoterUserId}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="batchId != null "> and batch_id = #{batchId}</if>
+            <if test="batchNo != null "> and batch_no = #{batchNo}</if>
+            <if test="nickName != null  and nickName != ''"> and nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="count != null "> and count = #{count}</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectProdQuotationHistoryById" parameterType="Long" resultMap="ProdQuotationHistoryResult">
+        <include refid="selectProdQuotationHistoryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertProdQuotationHistory" parameterType="ProdQuotationHistory" useGeneratedKeys="true" keyProperty="id">
+        insert into prod_quotation_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="prodId != null">prod_id,</if>
+            <if test="quoterUserId != null">quoter_user_id,</if>
+            <if test="quoterUserMobile != null">quoter_user_mobile,</if>
+            <if test="batchId != null">batch_id,</if>
+            <if test="batchNo != null and batchNo != ''">batch_no,</if>
+            <if test="nickName != null">nick_name,</if>
+            <if test="count != null">count,</if>
+            <if test="price != null">price,</if>
+            <if test="status != null">status,</if>
+            <if test="awardStatus != null">award_status,</if>
+            <if test="awardTime != null">award_time,</if>
+            <if test="batchProductId != null">batch_product_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="prodId != null">#{prodId},</if>
+            <if test="quoterUserId != null">#{quoterUserId},</if>
+            <if test="quoterUserMobile != null and quoterUserMobile != ''">#{quoterUserMobile},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="batchId != null">#{batchId},</if>
+            <if test="batchNo != null and batchNo != ''">#{batchNo},</if>
+            <if test="nickName != null">#{nickName},</if>
+            <if test="count != null">#{count},</if>
+            <if test="price != null">#{price},</if>
+            <if test="status != null">#{status},</if>
+            <if test="awardStatus != null">#{awardStatus},</if>
+            <if test="awardTime != null">#{awardTime},</if>
+            <if test="batchProductId != null">#{batchProductId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProdQuotationHistory" parameterType="ProdQuotationHistory">
+        update prod_quotation_history
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="prodId != null">prod_id = #{prodId},</if>
+            <if test="quoterUserId != null">quoter_user_id = #{quoterUserId},</if>
+            <if test="quoterUserMobile != null and quoterUserMobile != ''">quoter_user_mobile = #{quoterUserMobile},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="batchId != null">batch_id = #{batchId},</if>
+            <if test="batchNo != null">batch_no = #{batchNo},</if>
+            <if test="nickName != null and nickName != ''">nick_name = #{nickName},</if>
+            <if test="count != null">count = #{count},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="awardStatus != null">award_status = #{awardStatus},</if>
+            <if test="awardTime != null">award_time = #{awardTime},</if>
+            <if test="batchProductId != null">batch_product_id = #{batchProductId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProdQuotationHistoryById" parameterType="Long">
+        delete from prod_quotation_history where id = #{id}
+    </delete>
+
+    <select id="sumAwardedCount" resultType="int">
+        select ifnull(sum(count),0) from prod_quotation_history
+        where batch_product_id=#{batchProductId} and award_status=1
+    </select>
+
+    <delete id="deleteProdQuotationHistoryByIds" parameterType="String">
+        delete from prod_quotation_history where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="checkProdHistoryUnique" parameterType="ProdQuotationHistory" resultMap="ProdQuotationHistoryResult">
+        select id, name, prod_id, quoter_user_id,quoter_user_mobile,owner_user_id, batch_id
+            from prod_quotation_history where prod_id=#{prodId}
+                 and  batch_no=#{batchNo} and status in(1,2) limit 1
+    </select>
+
+</mapper>
